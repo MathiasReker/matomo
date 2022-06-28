@@ -3688,7 +3688,7 @@ if ($mysql) {
     });
 
     test("tracking", function() {
-        expect(180);
+        expect(182);
 
         // Prevent Opera and HtmlUnit from performing the default action (i.e., load the href URL)
         var stopEvent = function (evt) {
@@ -3836,6 +3836,11 @@ if ($mysql) {
 
         strictEqual(2, tracker.getNumTrackedPageViews(), 'getNumTrackedPageViews, should increase num pageview counter');
 
+        tracker.setReferrerUrl('http://another.refeerrer.url/path/page?ignore_referrer=1');
+        tracker.trackPageView();
+
+        strictEqual(3, tracker.getNumTrackedPageViews(), 'getNumTrackedPageViews, should increase num pageview counter');
+
         var idPageview = tracker.getConfigIdPageView();
         ok(/([0-9a-zA-Z]){6}/.test(idPageview), 'trackPageview, should generate a random pageview id');
 
@@ -3843,7 +3848,7 @@ if ($mysql) {
         equal(tracker.getCustomDimension(2), "", "custom dimensions should not be cleared after a tracked pageview");
 
         tracker.trackPageView("CustomTitleTest", {dimension2: 'my new value', dimension5: 'another dimension'});
-        strictEqual(3, tracker.getNumTrackedPageViews(), 'getNumTrackedPageViews, should increase num pageview counter');
+        strictEqual(4, tracker.getNumTrackedPageViews(), 'getNumTrackedPageViews, should increase num pageview counter');
 
         var idPageviewCustomTitle = tracker.getConfigIdPageView();
         ok(idPageviewCustomTitle != idPageview, 'trackPageview, should generate a new random pageview id whenever it is called');
@@ -4206,7 +4211,7 @@ if ($mysql) {
             var countTrackingEvents = /<span\>([0-9]+)\<\/span\>/.exec(results);
             ok (countTrackingEvents, "countTrackingEvents is set");
             if(countTrackingEvents) {
-                equal( countTrackingEvents[1], "55", "count tracking events" );
+                equal( countTrackingEvents[1], "56", "count tracking events" );
             }
 
             // firing callback
@@ -4239,6 +4244,7 @@ if ($mysql) {
             ok( /localhost.localdomain/.test( results ), "setCustomUrl()" );
             ok( /referrer.example.com/.test( results ), "setReferrerUrl()" );
             ok( ! /ignored.referrer.url/.test( results ), "ignored referrer url isn't sent with request" );
+            ok( ! /another.refeerrer.url/.test( results ), "referrer ignored with url parameter isn't sent with request" );
             ok( /cookiename/.test( results ) && /cookievalue/.test( results ), "tracking request contains custom variable" );
             ok( /DeleteCustomVariableCookie/.test( results ), "tracking request deleting custom variable" );
             ok( /DoTrack/.test( results ), "setDoNotTrack(false)" );

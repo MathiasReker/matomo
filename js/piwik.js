@@ -2516,6 +2516,10 @@ if (typeof window.Matomo !== 'object') {
                 // for outlinks or referrers
                 url = removeUrlParameter(url, configVisitorIdUrlParameter);
 
+                // remove ignore referrer parameter if present
+                url = removeUrlParameter(url, 'ignore_referrer');
+                url = removeUrlParameter(url, 'ignore_referer');
+
                 for (i = 0; i < configExcludedQueryParams.length; i++) {
                     url = removeUrlParameter(url, configExcludedQueryParams[i]);
                 }
@@ -3677,6 +3681,16 @@ if (typeof window.Matomo !== 'object') {
                 return request + timings;
             }
 
+            /**
+             * Returns if the given url contains a parameter to ignore the referrer
+             * e.g. ignore_referer or ignore_referrer
+             * @param url
+             * @returns {boolean}
+             */
+            function hasIgnoreReferrerParameter(url) {
+                return getUrlParameter(url, 'ignore_referrer') === "1" || getUrlParameter(url, 'ignore_referer') === "1";
+            }
+
             function detectReferrerAttribution() {
                 var i,
                     now = new Date(),
@@ -3700,7 +3714,7 @@ if (typeof window.Matomo !== 'object') {
                 referralTs = attributionCookie[2];
                 referralUrl = attributionCookie[3];
 
-                if (!cookieSessionValue) {
+                if (hasIgnoreReferrerParameter(currentUrl) || !cookieSessionValue) {
                     // cookie 'ses' was not found: we consider this the start of a 'session'
 
                     // Detect the campaign information from the current URL
@@ -3791,7 +3805,8 @@ if (typeof window.Matomo !== 'object') {
                     now = new Date(),
                     customVariablesCopy = customVariables,
                     cookieCustomVariablesName = getCookieName('cvar'),
-                    currentUrl = configCustomUrl || locationHrefAlias;
+                    currentUrl = configCustomUrl || locationHrefAlias,
+                    hasIgnoreReferrerParam = hasIgnoreReferrerParameter(currentUrl);
 
                 if (configCookiesDisabled) {
                     deleteCookies();
@@ -3818,7 +3833,7 @@ if (typeof window.Matomo !== 'object') {
                     '&r=' + String(Math.random()).slice(2, 8) + // keep the string to a minimum
                     '&h=' + now.getHours() + '&m=' + now.getMinutes() + '&s=' + now.getSeconds() +
                     '&url=' + encodeWrapper(purify(currentUrl)) +
-                    (configReferrerUrl.length && !isReferrerExcluded(configReferrerUrl) ? '&urlref=' + encodeWrapper(purify(configReferrerUrl)) : '') +
+                    (configReferrerUrl.length && !isReferrerExcluded(configReferrerUrl) && !hasIgnoreReferrerParam ? '&urlref=' + encodeWrapper(purify(configReferrerUrl)) : '') +
                     (isNumberOrHasLength(configUserId) ? '&uid=' + encodeWrapper(configUserId) : '') +
                     '&_id=' + cookieVisitorIdValues.uuid +
                     '&_idn=' + cookieVisitorIdValues.newVisitor + // currently unused
