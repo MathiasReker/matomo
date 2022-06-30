@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Matomo - free/libre analytics platform
  *
@@ -23,7 +24,6 @@ use Piwik\Tests\Framework\TestCase\IntegrationTestCase;
  */
 class UserInviteTest extends IntegrationTestCase
 {
-
     /**
      * @var Model
      */
@@ -31,10 +31,10 @@ class UserInviteTest extends IntegrationTestCase
     protected $dateTime = '2013-01-23 01:23:45';
 
     protected $token = "13cb9dcef6cc70b02a640cee30dc8ce9";
-    protected $pendingUser = array(
+    protected $pendingUser = [
       'login' => '000pendingUser3',
       'email' => 'pendinguser3light@example.com'
-    );
+    ];
 
 
     public function setUp(): void
@@ -46,58 +46,64 @@ class UserInviteTest extends IntegrationTestCase
         $this->model->attachInviteToken($this->pendingUser['login'], $this->token);
     }
 
-    public function test_getInviteUser()
+    public function testGetInviteUser()
     {
         $user = $this->model->getUser($this->pendingUser['login']);
         $this->assertNotNull($user['invite_token']);
     }
 
 
-    public function test_inviteUserEmail()
+    public function testInviteUserEmail()
     {
         $token = $this->token;
         $user = $this->model->getUser($this->pendingUser['login']);
-        $email = StaticContainer::getContainer()->make(UserInviteEmail::class, array(
+        $email = StaticContainer::getContainer()->make(UserInviteEmail::class, [
           'currentUser' => 'admin',
-          'user'        => $user,
+          'invitedUser' => $user,
           'siteName'    => 'test site',
           'token'       => $token,
           'expireDays'  => 7
-        ));
+        ]);
 
         $content = $email->getBodyHtml();
 
-        $this->assertStringContainsString('?module=Login&action=acceptInvitation&token=' . $token, $content,
-          'error on email');
+        $this->assertStringContainsString(
+            '?module=Login&action=acceptInvitation&token=' . $token,
+            $content,
+            'error on email'
+        );
 
-        $this->assertStringContainsString('?module=Login&action=declineInvitation&token=' . $token, $content,
-          'error on email');
+        $this->assertStringContainsString(
+            '?module=Login&action=declineInvitation&token=' . $token,
+            $content,
+            'error on email'
+        );
     }
 
     /**
      * @throws \Exception
      */
-    public function test_addInviteUserToken()
+    public function testAddInviteUserToken()
     {
         $response = Http::sendHttpRequest(
-          Fixture::getRootUrl() . 'tests/PHPUnit/proxy/index.php?module=Login&action=acceptInvitation&token=' . $this->token,
-          10
+            Fixture::getRootUrl() . 'tests/PHPUnit/proxy/index.php?module=Login&action=acceptInvitation&token=' . $this->token,
+            10
         );
 
-        $this->assertStringContainsString('Accept Invitation', $response, 'error on accept invitation');
+        $this->assertStringContainsString('Accept invitation', $response, 'error on accept invitation');
     }
 
 
     /**
      * @throws \Exception
      */
-    public function test_declineInviteUserToken()
+    public function testDeclineInviteUserToken()
     {
         $response = Http::sendHttpRequest(
-          Fixture::getRootUrl() . 'tests/PHPUnit/proxy/index.php?module=Login&action=declineInvitation&token=' . $this->token,
-          10
+            Fixture::getRootUrl() . 'tests/PHPUnit/proxy/index.php?module=Login&action=declineInvitation&token=' . $this->token,
+            10
         );
 
-        $this->assertStringContainsString('decline this Invitation', $response, 'error on accept invitation');
+        $this->assertStringContainsString('decline this invitation', $response, 'error on accept invitation');
     }
 }
