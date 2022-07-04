@@ -770,9 +770,8 @@ class API extends \Piwik\Plugin\API
          *
          * @param string $userLogin The new user's login.
          * @param string $email The new user's e-mail.
-         * @param string $inviterLogin The login of the user who invited the new user
          */
-        Piwik::postEvent('UsersManager.inviteUser.end', [$userLogin, $email, Piwik::getCurrentUserLogin()]);
+        Piwik::postEvent('UsersManager.inviteUser.end', [$userLogin, $email]);
     }
 
     /**
@@ -1541,8 +1540,7 @@ class API extends \Piwik\Plugin\API
          * Triggered after a new user was invited.
          *
          * @param string $userLogin The new user's login.
-         * @param string $inviterLogin The login of the user who invited the new user
          */
-        Piwik::postEvent('UsersManager.inviteUser.resendInvite', [$userLogin, Piwik::getCurrentUserLogin()]);
+        Piwik::postEvent('UsersManager.inviteUser.resendInvite', [$userLogin, $user['email']]);
     }
 }

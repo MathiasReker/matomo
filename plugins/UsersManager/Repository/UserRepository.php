@@ -129,11 +129,11 @@ class UserRepository
         }
 
         $email = StaticContainer::getContainer()->make(UserInviteEmail::class, [
-            'currentUser' => Piwik::getCurrentUserLogin(),
-            'invitedUser' => $user,
-            'siteName'    => $siteName,
-            'token'       => $inviteToken,
-            'expireDays'  => $expiryInDays
+            'currentUser'  => Piwik::getCurrentUserLogin(),
+            'invitedUser'  => $user,
+            'siteName'     => $siteName,
+            'token'        => $inviteToken,
+            'expiryInDays' => $expiryInDays
         ]);
         $email->safeSend();
     }

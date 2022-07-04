@@ -388,11 +388,11 @@ class Model
           $expiredSince);
     }
 
-    public function deleteExpiredInvites($expiredSince)
+    public function getExpiredInvites($expiredSince)
     {
         $db = $this->getDb();
 
-        return $db->query("DELETE FROM " . $this->userTable . " WHERE `date_expired` is not null and date_expired < ?",
+        return $db->query("SELECT * FROM " . $this->userTable . " WHERE `invite_expired_at` is not null and invite_expired_at < ?",
           $expiredSince);
     }
 

@@ -609,7 +609,15 @@ class Controller extends \Piwik\Plugin\ControllerAdmin
                     }
                 }
 
-                Piwik::postEvent('Login.inviteUser.accepted', [$user['login']]);
+                /**
+                 * Triggered after a user accepted an invite
+                 *
+                 * @param string $userLogin The invited user's login.
+                 * @param string $email The invited user's e-mail.
+                 * @param string $inviterLogin The login of the user, who invited this user
+                 */
+                Piwik::postEvent('UsersManager.inviteUser.accepted', [$user['login'], $user['email'], $user['invited_by']]);
+
                 $this->authenticateAndRedirect($user['login'], $passwordConfirmation);
             }
 
@@ -668,7 +676,15 @@ class Controller extends \Piwik\Plugin\ControllerAdmin
             }
 
             $view = new View('@Login/invitationDeclineSuccess');
-            Piwik::postEvent('Login.inviteUser.declined', [$user['login']]);
+
+            /**
+             * Triggered after a user accepted an invite
+             *
+             * @param string $userLogin The invited user's login.
+             * @param string $email The invited user's e-mail.
+             * @param string $inviterLogin The login of the user, who invited this user
+             */
+            Piwik::postEvent('UsersManager.inviteUser.declined', [$user['login'], $user['email'], $user['invited_by']]);
         }
 
         $view->token = $token;

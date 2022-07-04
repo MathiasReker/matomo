@@ -90,13 +90,13 @@ class Updates_4_11_0_rc2 extends PiwikUpdates
                 $model->attachInviteToken($user['login'], $generatedToken, 7);
 
                 // send email
-                $email = StaticContainer::getContainer()->make(UserInviteEmail::class, array(
-                  'currentUser' => Piwik::getCurrentUserLogin(),
-                  'invitedUser' => $user,
-                  'siteName'    => $siteName,
-                  'token'       => $generatedToken,
-                  'expireDays'  => 7
-                ));
+                $email = StaticContainer::getContainer()->make(UserInviteEmail::class, [
+                  'currentUser'  => Piwik::getCurrentUserLogin(),
+                  'invitedUser'  => $user,
+                  'siteName'     => $siteName,
+                  'token'        => $generatedToken,
+                  'expiryInDays' => 7
+                ]);
                 $email->safeSend();
             }
         }

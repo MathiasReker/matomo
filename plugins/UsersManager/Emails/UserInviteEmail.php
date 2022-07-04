@@ -42,15 +42,15 @@ class UserInviteEmail extends Mail
      * @param array  $invitedUser
      * @param string $siteName
      * @param string $token
-     * @param int    $expireDays
+     * @param int    $expiryInDays
      */
-    public function __construct($currentUser, $invitedUser, $siteName, $token, $expireDays)
+    public function __construct($currentUser, $invitedUser, $siteName, $token, $expiryInDays)
     {
         parent::__construct();
         $this->currentUser  = $currentUser;
         $this->invitedUser  = $invitedUser;
         $this->token        = $token;
-        $this->expiryInDays = $expireDays;
+        $this->expiryInDays = $expiryInDays;
         $this->siteName = $siteName;
         $this->setUpEmail();
     }

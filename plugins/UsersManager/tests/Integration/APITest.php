@@ -1236,10 +1236,9 @@ class APITest extends IntegrationTestCase
     {
         $eventWasFired = false;
 
-        EventDispatcher::getInstance()->addObserver('UsersManager.inviteUser.end', function ($userLogin, $email, $inviterLogin) use (&$eventWasFired) {
+        EventDispatcher::getInstance()->addObserver('UsersManager.inviteUser.end', function ($userLogin, $email) use (&$eventWasFired) {
             self::assertEquals('pendingLoginTest', $userLogin);
             self::assertEquals('pendingLoginTest@matomo.org', $email);
-            self::assertEquals('superUserLogin', $inviterLogin);
             $eventWasFired = true;
         });
 
@@ -1309,9 +1308,8 @@ class APITest extends IntegrationTestCase
 
         $eventWasFired = false;
 
-        EventDispatcher::getInstance()->addObserver('UsersManager.inviteUser.resendInvite', function ($userLogin, $currentUser) use (&$eventWasFired) {
+        EventDispatcher::getInstance()->addObserver('UsersManager.inviteUser.resendInvite', function ($userLogin) use (&$eventWasFired) {
             self::assertEquals('pendingLoginTest', $userLogin);
-            self::assertEquals('superUserLogin', $currentUser);
             $eventWasFired = true;
         });
 
@@ -1338,9 +1336,8 @@ class APITest extends IntegrationTestCase
 
         $eventWasFired = false;
 
-        EventDispatcher::getInstance()->addObserver('UsersManager.inviteUser.resendInvite', function ($userLogin, $currentUser) use (&$eventWasFired) {
+        EventDispatcher::getInstance()->addObserver('UsersManager.inviteUser.resendInvite', function ($userLogin) use (&$eventWasFired) {
             self::assertEquals('pendingLoginTest', $userLogin);
-            self::assertEquals('adminUser', $currentUser);
             $eventWasFired = true;
         });
 
